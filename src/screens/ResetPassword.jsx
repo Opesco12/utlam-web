@@ -80,7 +80,7 @@ const ResetPassword = () => {
                 variant="semibold"
                 color={Colors.primary}
               >
-                Reset Passowrd
+                Reset Password
               </StyledText>
               <br />
               <StyledText
@@ -107,7 +107,7 @@ const ResetPassword = () => {
                   const response = await resetPassword(token, password);
                   if (response) {
                     toast.success("Password Reset Succesful");
-                    navigate("/login", { replace: true });
+                    navigate("/login");
                   }
                 } else {
                   const response = await resetPasswordRequest(email);
