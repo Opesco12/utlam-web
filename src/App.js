@@ -46,6 +46,7 @@ import {
 import KYC_1 from "./screens/Kyc_1";
 import MutualFunds from "./screens/MutualFunds";
 import FixedIncome from "./screens/FixedIncome";
+import ResetPassword from "./screens/ResetPassword";
 
 const Layout = () => {
   return (
@@ -158,6 +159,17 @@ function App() {
             element={
               <PublicRoute>
                 <Login />
+              </PublicRoute>
+            }
+            replace
+          />
+
+          <Route
+            index
+            path="/forgot_password"
+            element={
+              <PublicRoute>
+                <ResetPassword />
               </PublicRoute>
             }
             replace

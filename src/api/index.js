@@ -261,6 +261,44 @@ export const changePassword = async (oldPassword, newPassword) => {
   }
 };
 
+export const resetPasswordRequest = async (email) => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.ResetPasswordRequest,
+      method: "POST",
+      data: { username: email, emailAddress: email },
+      requiresAuth: false,
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+    if (error.status === 400) {
+      toast.error("Please input a registered email address");
+    } else {
+      toast.error("An error occured");
+    }
+  }
+};
+
+export const resetPassword = async (token, password) => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.ResetPassword,
+      method: "POST",
+      data: { token: token, password: password },
+      requiresAuth: false,
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+    if (error.status === 400) {
+      toast.error("An error occured, Please confirm that the token is correct");
+    } else {
+      toast.error("An error occured");
+    }
+  }
+};
+
 export const getWalletBalance = async () => {
   try {
     const data = await apiCall({

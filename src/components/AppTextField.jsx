@@ -1,7 +1,6 @@
 import React from "react";
 import { TextField, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { EyeSlash } from "iconsax-react";
 import { useField } from "formik";
 
 import { Colors } from "../constants/Colors";
@@ -14,6 +13,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     "&.Mui-focused fieldset": {
       borderColor: Colors.primary,
     },
+    borderRadius: "0.5rem",
   },
 }));
 

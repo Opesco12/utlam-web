@@ -74,7 +74,9 @@ const Login = () => {
                     style={{ textAlign: "right" }}
                     className={"text-light hover:text-primary"}
                   >
-                    Forgot Password?
+                    <span onClick={() => navigate("/forgot_password")}>
+                      Forgot Password?
+                    </span>
                   </StyledText>
                   <AppButton onClick={handleSubmit}>
                     {isSubmitting ? (
