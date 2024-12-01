@@ -107,7 +107,8 @@ const ResetPassword = () => {
                   const response = await resetPassword(token, password);
                   if (response) {
                     toast.success("Password Reset Succesful");
-                    navigate("/login");
+                    setIsEmailRegistered(false);
+                    // navigate("/login");
                   }
                 } else {
                   const response = await resetPasswordRequest(email);
