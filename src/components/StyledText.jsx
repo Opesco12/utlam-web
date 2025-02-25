@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/styledText.css"; // Ensure you have the CSS file for styles
+import "../styles/styledText.css";
 
 const StyledText = ({
   color,

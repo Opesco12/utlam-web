@@ -72,7 +72,7 @@ const Otp = () => {
         <div className="bg-primary h-screen hidden md:block"></div>
 
         <div className="flex h-screen items-center justify-center ">
-          <div className=" mx-auto w-[60%] md:w-[75%] lg:w-[55%]">
+          <div className=" mx-auto w-[90%] md:w-[85%] lg:w-[55%]">
             <div className="mb-3">
               <StyledText
                 type="heading"

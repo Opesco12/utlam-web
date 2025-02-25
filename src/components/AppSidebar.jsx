@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { useMediaQuery } from "react-responsive";
-import {
-  FaHome,
-  FaChartLine,
-  FaFolder,
-  FaBars,
-  FaSignOutAlt,
-} from "react-icons/fa";
 
 import Bg from "../svg_assets/sidebar-bg.svg";
 import LogoWhite from "../svg_assets/logo_white.svg";
@@ -67,15 +60,16 @@ const ResponsiveSidebar = () => {
     <>
       {isSmallScreen && (
         <div
-          className="h-[55px] w-[100%] flex justify-between py-[5px] px-[15px]"
+          className="h-20 w-full flex justify-between py-1 px-4"
           style={{ backgroundImage: `url(${Bg})` }}
         >
-          <div className="flex items-center gap-[8px]">
+          <div className="flex items-center gap-2">
             <img
               src={`${LogoWhite}`}
               alt="Logo"
-              className="h-[28px] w-[28px]"
+              className="h-7 w-7"
             />
+
             <StyledText
               color={Colors.white}
               variant="semibold"

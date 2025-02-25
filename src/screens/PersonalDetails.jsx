@@ -1,109 +1,126 @@
 import { useState, useEffect } from "react";
-import { Formik } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import HeaderText from "../components/HeaderText";
-import AppTextField from "../components/AppTextField";
 import StyledText from "../components/StyledText";
 import { Colors } from "../constants/Colors";
-import AppSelect from "../components/AppSelect";
-import AppButton from "../components/AppButton";
 import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
+import SmallLoadingSpinner from "../components/SmallLoadingSpinner";
 
 import { getClientInfo, getNextOfKins, createNextOfKin } from "../api";
 import { userProfileSchema } from "../validationSchemas/userSchema";
-import SmallLoadingSpinner from "../components/SmallLoadingSpinner";
+
+// Custom TextField component using Formik's Field
+const TextField = ({ label, ...props }) => {
+  return (
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">{label}</label>
+      <Field
+        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+        {...props}
+      />
+      <ErrorMessage
+        name={props.name}
+        component="div"
+        className="text-red-500 text-xs mt-1"
+      />
+    </div>
+  );
+};
+
+// Custom Select component using Formik's Field
+const SelectField = ({ label, options, ...props }) => {
+  return (
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">{label}</label>
+      <Field
+        as="select"
+        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+        {...props}
+      >
+        <option value="">Select {label}</option>
+        {options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
+        ))}
+      </Field>
+      <ErrorMessage
+        name={props.name}
+        component="div"
+        className="text-red-500 text-xs mt-1"
+      />
+    </div>
+  );
+};
+
+// Custom Button component to replace AppButton
+const Button = ({ children, type = "button", disabled = false, ...props }) => {
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      className={`px-4 py-2 rounded-md bg-${Colors.primary} text-white font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${Colors.primary} disabled:opacity-50 disabled:cursor-not-allowed`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 const PersonalDetails = () => {
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [userHasNextOfKin, setUserHasNextOfKin] = useState(0);
-  const [nexOfKin, setNextOfKin] = useState(null);
-  const [kinRelationship, setKinRelationship] = useState(null);
-  const [gender, setGender] = useState(null);
+  const [nextOfKin, setNextOfKin] = useState(null);
 
   const kinRelationships = [
-    {
-      label: "Spouse",
-      value: "Spouse",
-    },
-    {
-      label: "Parent",
-      value: "Parent",
-    },
-    {
-      label: "Sibling",
-      value: "Sibling",
-    },
-    {
-      label: "Son",
-      value: "Son",
-    },
-    {
-      label: "Daughter",
-      value: "Daughter",
-    },
-    {
-      label: "Guardian",
-      value: "Guardian",
-    },
-    {
-      label: "Aunt",
-      value: "Aunt",
-    },
-    {
-      label: "Uncle",
-      value: "Uncle",
-    },
-    {
-      label: "Niece",
-      value: "Niece",
-    },
-    {
-      label: "Nephew",
-      value: "Nephew",
-    },
-    {
-      label: "Cousin",
-      value: "Cousin",
-    },
-    {
-      label: "Other",
-      value: "Other",
-    },
+    { label: "Spouse", value: "Spouse" },
+    { label: "Parent", value: "Parent" },
+    { label: "Sibling", value: "Sibling" },
+    { label: "Son", value: "Son" },
+    { label: "Daughter", value: "Daughter" },
+    { label: "Guardian", value: "Guardian" },
+    { label: "Aunt", value: "Aunt" },
+    { label: "Uncle", value: "Uncle" },
+    { label: "Niece", value: "Niece" },
+    { label: "Nephew", value: "Nephew" },
+    { label: "Cousin", value: "Cousin" },
+    { label: "Other", value: "Other" },
   ];
 
   const genderOptions = [
-    {
-      label: "Male",
-      value: "M",
-    },
+    { label: "Male", value: "M" },
     { label: "Female", value: "F" },
   ];
 
   const fetchData = async () => {
-    setLoading(true);
-    const clientInfo = await getClientInfo();
-    const { firstname, surname, mobileNumber } = clientInfo;
-    setUserData({
-      firstname: firstname,
-      surname: surname,
-      mobileNumber: mobileNumber,
-    });
+    try {
+      const clientInfo = await getClientInfo();
+      const { firstname, surname, mobileNumber } = clientInfo;
+      setUserData({
+        firstname,
+        surname,
+        mobileNumber,
+      });
 
-    const nextOfKins = await getNextOfKins();
-    if (nextOfKins.length > 0) {
-      console.log(nextOfKins);
-      setUserHasNextOfKin(1);
-      setNextOfKin(nextOfKins[0]);
-      setKinRelationship(nextOfKins[0].relationship);
-      setGender(nextOfKins[0].gender);
+      const nextOfKins = await getNextOfKins();
+      if (nextOfKins.length > 0) {
+        setUserHasNextOfKin(1);
+        setNextOfKin(nextOfKins[0]);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch user data");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -117,80 +134,75 @@ const PersonalDetails = () => {
       </div>
     );
   }
+
+  // Prepare initial form values
+  const initialValues = {
+    firstname: userData?.firstname || "",
+    surname: userData?.surname || "",
+    phoneNumber: userData?.mobileNumber || "",
+    kinFirstname: nextOfKin?.firstname || "",
+    kinLastname: nextOfKin?.surname || "",
+    kinEmail: nextOfKin?.email || "",
+    kinPhoneNumber: nextOfKin?.telephoneNo || "",
+    kinGender: nextOfKin?.gender || "",
+    kinRelationship: nextOfKin?.relationship || "",
+  };
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const {
+        kinEmail,
+        kinFirstname,
+        kinLastname,
+        kinPhoneNumber,
+        kinGender,
+        kinRelationship,
+      } = values;
+
+      if (userHasNextOfKin === 0) {
+        if (!kinRelationship || !kinGender) {
+          toast.error("Please fill out all fields");
+          return;
+        }
+
+        const nextOfKinData = {
+          email: kinEmail,
+          firstname: kinFirstname,
+          surname: kinLastname,
+          telephoneNo: kinPhoneNumber,
+          relationship: kinRelationship,
+          gender: kinGender,
+        };
+
+        const data = await createNextOfKin(nextOfKinData);
+        if (data) {
+          toast.success("Profile has been updated successfully");
+          navigate("/profile");
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to update profile");
+      console.error(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div>
       <HeaderText>Personal Details</HeaderText>
-      <div className=" flex flex-col items-center gap-[15px] justify-center mb-[30px]">
-        <img
-          src="/images/utlam-default.webp"
-          className=" rounded-full h-[75px] w-[75px] md:h-[150px] md:w-[150px]"
-        />
-        <StyledText
-          type="subheading"
-          variant="semibold"
-          color={Colors.primary}
-        >
-          {`${userData?.firstname} ${userData?.surname}`}
-        </StyledText>
-      </div>
 
-      <div className="border p-[20px] rounded-lg ">
+      <div className="border p-[20px] rounded-lg mt-5">
         <Formik
           validationSchema={userProfileSchema}
-          initialValues={
-            userHasNextOfKin > 0
-              ? {
-                  firstname: userData?.firstname,
-                  surname: userData?.surname,
-                  phoneNumber: userData?.mobileNumber,
-                  kinFirstname: nexOfKin ? nexOfKin?.firstname : "",
-                  kinLastname: nexOfKin ? nexOfKin?.surname : "",
-                  kinEmail: nexOfKin ? nexOfKin?.email : "",
-                  kinPhoneNumber: nexOfKin ? nexOfKin?.telephoneNo : "",
-                  kinGender: nexOfKin ? nexOfKin?.gender : "",
-                  kinRelationship: nexOfKin ? nexOfKin?.relationship : "",
-                }
-              : {
-                  firstname: userData?.firstname,
-                  surname: userData?.surname,
-                  phoneNumber: userData?.mobileNumber,
-                  kinFirstname: "",
-                  kinLastname: "",
-                  kinEmail: "",
-                  kinPhoneNumber: "",
-                  kinGender: "",
-                  kinRelationship: "",
-                }
-          }
-          onSubmit={async (values) => {
-            const { kinEmail, kinFirstname, kinLastname, kinPhoneNumber } =
-              values;
-
-            const nextOfKinData = {
-              email: kinEmail,
-              firstname: kinFirstname,
-              surname: kinLastname,
-              telephoneNo: kinPhoneNumber,
-              relationship: kinRelationship,
-              gender: gender,
-            };
-            if (userHasNextOfKin === 0) {
-              if (kinRelationship && gender) {
-                const data = await createNextOfKin(nextOfKinData);
-                if (data) {
-                  toast.success("Profile has been updated succesfully");
-                  navigate("/profile");
-                }
-              } else {
-                toast.error("PLease fill out all fields");
-              }
-            }
-          }}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          enableReinitialize
         >
-          {({ handleChange, handleSubmit, isSubmitting }) => (
-            <div className="w-full flex flex-col gap-[40px]">
+          {({ isSubmitting }) => (
+            <Form className="w-full flex flex-col gap-[40px]">
               <div className="w-full flex justify-between flex-col md:flex-row">
-                <div className="flex flex-col gap-[15px] w-[100%]  md:w-[48%] ">
+                <div className="flex flex-col gap-[15px] w-[100%] md:w-[48%]">
                   <StyledText
                     type="title"
                     color={Colors.text}
@@ -198,28 +210,29 @@ const PersonalDetails = () => {
                   >
                     Personal Details
                   </StyledText>
+
                   <div className="flex justify-between relative">
-                    <AppTextField
-                      name="firstname"
-                      onChange={handleChange("firstname")}
-                      label={"First Name"}
-                      sx={{ width: "48%" }}
-                    />
-                    <AppTextField
-                      name="surname"
-                      onChange={handleChange("surname")}
-                      label={"Last Name"}
-                      sx={{ width: "48%" }}
-                    />
+                    <div className="w-[48%]">
+                      <TextField
+                        name="firstname"
+                        label="First Name"
+                      />
+                    </div>
+                    <div className="w-[48%]">
+                      <TextField
+                        name="surname"
+                        label="Last Name"
+                      />
+                    </div>
                   </div>
-                  <AppTextField
+
+                  <TextField
                     name="phoneNumber"
-                    onChange={handleChange("phoneNumber")}
-                    label={"Phone Number"}
-                    sx={{ width: "100%" }}
+                    label="Phone Number"
                   />
                 </div>
-                <div className="flex flex-col gap-[15px] w-[100%] mt-[20px] md:w-[48%] md:mt-[0px] ">
+
+                <div className="flex flex-col gap-[15px] w-[100%] mt-[20px] md:w-[48%] md:mt-[0px]">
                   <StyledText
                     type="title"
                     color={Colors.text}
@@ -227,64 +240,64 @@ const PersonalDetails = () => {
                   >
                     Next of kin
                   </StyledText>
+
                   <div className="flex justify-between relative">
-                    <AppTextField
-                      name="kinFirstname"
-                      onChange={handleChange("kinFirstname")}
-                      disabled={userHasNextOfKin === 1 ? true : false}
-                      label={"First Name"}
-                      sx={{ width: "48%" }}
-                    />
-                    <AppTextField
-                      name="kinLastname"
-                      onChange={handleChange("kinLastname")}
-                      disabled={userHasNextOfKin === 1 ? true : false}
-                      label={"Last Name"}
-                      sx={{ width: "48%" }}
-                    />
+                    <div className="w-[48%]">
+                      <TextField
+                        name="kinFirstname"
+                        label="First Name"
+                        disabled={userHasNextOfKin === 1}
+                      />
+                    </div>
+                    <div className="w-[48%]">
+                      <TextField
+                        name="kinLastname"
+                        label="Last Name"
+                        disabled={userHasNextOfKin === 1}
+                      />
+                    </div>
                   </div>
 
-                  <AppTextField
+                  <TextField
                     name="kinEmail"
-                    onChange={handleChange("kinEmail")}
-                    disabled={userHasNextOfKin === 1 ? true : false}
-                    label={"Email Address"}
-                    sx={{ width: "100%" }}
+                    label="Email Address"
+                    disabled={userHasNextOfKin === 1}
                   />
 
-                  <AppTextField
+                  <TextField
                     name="kinPhoneNumber"
-                    onChange={handleChange("kinPhoneNumber")}
-                    disabled={userHasNextOfKin === 1 ? true : false}
-                    label={"Phone Number"}
-                    sx={{ width: "100%" }}
+                    label="Phone Number"
+                    disabled={userHasNextOfKin === 1}
                   />
 
-                  <AppSelect
-                    name={"kinRelationship"}
+                  <SelectField
+                    name="kinRelationship"
                     label="Relationship"
-                    onValueChange={(value) => setKinRelationship(value)}
-                    // selectedValue={kinRelationship}
                     options={kinRelationships}
-                    disabled={userHasNextOfKin === 1 ? true : false}
+                    disabled={userHasNextOfKin === 1}
                   />
-                  <AppSelect
-                    name={"kinGender"}
+
+                  <SelectField
+                    name="kinGender"
                     label="Gender"
-                    onValueChange={(value) => setGender(value)}
                     options={genderOptions}
-                    disabled={userHasNextOfKin === 1 ? true : false}
+                    disabled={userHasNextOfKin === 1}
                   />
                 </div>
               </div>
-              <AppButton onClick={handleSubmit}>
-                {isSubmitting === true ? (
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-primary text-white py-2 px-4 rounded-md hover:bg-lightPrimary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+              >
+                {isSubmitting ? (
                   <SmallLoadingSpinner color={Colors.white} />
                 ) : (
                   "Save"
                 )}
-              </AppButton>
-            </div>
+              </button>
+            </Form>
           )}
         </Formik>
       </div>

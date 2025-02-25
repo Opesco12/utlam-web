@@ -38,7 +38,7 @@ const Profile = () => {
         width={"100%"}
         backgroundColor={Colors.primary}
       >
-        <div className="flex justify-between items-center py-3">
+        <div className="flex justify-between items-center py-5">
           <div>
             <StyledText
               type="heading"
@@ -50,11 +50,6 @@ const Profile = () => {
             <br />
             <StyledText color={Colors.white}>{name}</StyledText>
           </div>
-          <img
-            alt=""
-            src="/images/utlam-default.webp"
-            className="rounded-full h-[50px] w-[50px]  md:w-[100px] md:h-[100px] "
-          />
         </div>
       </ContentBox>
 

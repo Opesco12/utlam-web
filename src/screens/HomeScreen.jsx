@@ -35,7 +35,7 @@ import { keys } from "../storage/kyes";
 import AppModal from "../components/AppModal";
 
 const HomeScreen = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userBalance, setUserBalance] = useState(0);
   const [name, setName] = useState(null);
   const [hideBalance, setHideBalance] = useState(false);

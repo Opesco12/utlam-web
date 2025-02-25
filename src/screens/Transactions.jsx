@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
-import ContentBox from "../components/ContentBox";
-import HeaderText from "../components/HeaderText";
-import MonthYearSelector from "../components/MonthYearSelector";
-import StyledText from "../components/StyledText";
-import Pagination from "../components/Pagination";
-import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
-import { Colors } from "../constants/Colors";
-
-import { amountFormatter } from "../helperFunctions/amountFormatter";
-import { getTransactions } from "../api";
 import { useNavigate } from "react-router-dom";
 
+import MonthYearSelector from "../components/MonthYearSelector";
+import Pagination from "../components/Pagination";
+import StyledText from "../components/StyledText";
+import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
+import { amountFormatter } from "../helperFunctions/amountFormatter";
+import { Colors } from "../constants/Colors";
+
+import { getTransactions } from "../api";
+
 const Transactions = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [startdate, setStartdate] = useState(null);
   const [enddate, setEnddate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 20;
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     const currentDate = new Date();
@@ -29,7 +30,7 @@ const Transactions = () => {
   }, []);
 
   const fetchTransactionsForDateRange = async (start, end) => {
-    setLoading(true);
+    console.log(start, end);
     try {
       const allTransactions = await getTransactions(start, end);
       setTotalPages(Math.ceil(allTransactions.length / itemsPerPage));
@@ -53,11 +54,13 @@ const Transactions = () => {
     setCurrentPage(page);
     fetchTransactionsForDateRange(startdate, enddate);
   };
-
   const handleMonthYearChange = (month, year) => {
-    const start = new Date(year, month - 1, 1);
+    setSelectedMonth(month);
+    setSelectedYear(year);
 
-    const end = new Date(year, month, 0);
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 1);
+    end.setDate(end.getDate() - 1);
 
     const formattedStart = start.toISOString().split("T")[0];
     const formattedEnd = end.toISOString().split("T")[0];
@@ -77,11 +80,22 @@ const Transactions = () => {
   }
 
   return (
-    <div>
-      <HeaderText>Transactions</HeaderText>
+    <div className="flex h-full flex-col">
+      <StyledText
+        variant="semibold"
+        type="heading"
+        color={Colors.primary}
+        className="my-4"
+      >
+        Transaction History
+      </StyledText>
 
-      <ContentBox>
-        <MonthYearSelector onChange={handleMonthYearChange} />
+      <div className="flex-1 rounded-xl bg-white p-5 md:p-3 lg:p-5 shadow-md">
+        <MonthYearSelector
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+          onChange={handleMonthYearChange}
+        />
         <div className="">
           {transactions?.map((transaction, index) => (
             <TransactionItem
@@ -95,7 +109,7 @@ const Transactions = () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      </ContentBox>
+      </div>
     </div>
   );
 };
@@ -106,11 +120,11 @@ const TransactionItem = ({ transaction }) => {
   return (
     <div
       onClick={() => navigate("/transaction/details", { state: transaction })}
-      className="flex justify-between py-[15px] border-b"
+      className="flex justify-between border-b border-gray-200 py-[15px]"
     >
-      <div className="flex flex-col w-[60%]">
+      <div className="flex w-[60%] flex-col">
         <StyledText
-          variant="semibold"
+          variant="medium"
           color={Colors.primary}
           className="block"
           style={{

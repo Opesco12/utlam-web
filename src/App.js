@@ -54,7 +54,7 @@ const Layout = () => {
       <div className="flex flex-col h-screen overflow-hidden  md:flex-row">
         <ToastContainer autoClose={3000} />
         <ResponsiveSidebar />
-        <main className="overflow-y-auto w-full ">
+        <main className="overflow-y-auto w-full  ">
           <div className=" px-[15px] py-[25px] w-full flex-1 mx-auto  md:px-[30px]  lg:px-[45px] md:max-w-[800px] lg:max-w-[940px]">
             <Outlet />
           </div>
@@ -74,7 +74,7 @@ function App() {
             element={<Layout />}
           >
             <Route
-              path="/"
+              index
               element={<HomeScreen />}
             />
             <Route

@@ -17,6 +17,7 @@ export const endpoints = {
   getVirtualAccounts: "/getvirtualaccounts",
   getPortfolio: "/getclientportfolios",
   getTransactions: "/gettransactions",
+  getRecentTransactions: "/getrecenttransactions",
   getMutualFundOnlineBalances: "/getclientmutualfundonlinebalances",
   getMutualFundOnlineBalance: "/getclientmutualfundonlinebalance",
   getMutualFundStatement: "/getmutualfundstatement",
@@ -27,4 +28,9 @@ export const endpoints = {
   getLiabilityProducts: "/getliabilityproducts",
   fixedIncomeSubscription: "/fixedincomesubscriptionorder",
   fixedIncomeRedemption: "/fixedincomeredemptionorder",
+  getBanks: "/getbanks",
+  getClientBanks: "/getclientbankaccounts",
+  createBank: "/createbankaccount",
+  withdraw: "/debitwallet",
+  clientRelationshipManager: "/getclientrelationshipmanager",
 };

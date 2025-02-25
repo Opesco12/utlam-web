@@ -393,6 +393,18 @@ export const getTransactions = async (startdate, enddate) => {
   } catch (error) {}
 };
 
+export const getRecentTransactions = async () => {
+  try {
+    const data = await apiCall({
+      endpoint: `${endpoints.getRecentTransactions}/5`,
+      method: "GET",
+    });
+    return data;
+  } catch (error) {
+    toast.error("An error occured");
+  }
+};
+
 export const mutualFundSubscription = async ({
   accountNumber,
   portfolioId,
@@ -513,6 +525,62 @@ export const fixedIncomeRedemptionOrder = async (referenceNo, amount) => {
     return data;
   } catch (error) {
     console.log(error);
+    toast.error("An error occured while processing fund withdrawal");
+  }
+};
+
+export const getBanks = async () => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.getBanks,
+      method: "GET",
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+    toast.error("An error occured");
+  }
+};
+
+export const createClientBank = async (requestData) => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.createBank,
+      method: "POST",
+      data: requestData,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+
+    toast.error("Invalid details or error while processing request");
+  }
+};
+
+export const getclientbankaccounts = async () => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.getClientBanks,
+      method: "GET",
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+
+    toast.error("Unable to fetch client bank accounts");
+  }
+};
+
+export const debitWallet = async (requestData) => {
+  try {
+    const data = await apiCall({
+      endpoint: endpoints.withdraw,
+      method: "POST",
+      data: requestData,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
     toast.error("An error occured while processing fund withdrawal");
   }
 };
